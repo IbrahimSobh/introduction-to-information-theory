@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #faf8f1;
+      --color-ink:     #1c1c1c;
+      --color-muted:   #555555;
+      --font-sans:     'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 16px;
+    }
+    .frame { max-width: 960px; width: 100%; }
+    h1 {
+      font-size: clamp(1.75rem, 2.4vw + 0.8rem, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { font-size: 1rem; color: var(--color-muted); margin-bottom: 2rem; }
+    .figure { overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <h1>Introduction to Information Theory</h1>
+    <p class="subtitle">Part A: measuring information · Part B: using information · final quiz · certificate</p>
+
+    <div class="figure">
+    <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="it-course-overview-title it-course-overview-desc"
+         font-family="Inter, system-ui, sans-serif">
+      <title id="it-course-overview-title">Introduction to Information Theory: course path</title>
+      <desc id="it-course-overview-desc">Part A covers five lessons on measuring information (probability and logs, what information is, surprise and the bit, entropy, shared information), Part B four lessons on using it (compression, noisy channels, cross-entropy and KL, information theory in AI), then a final quiz where 10 of 12 correct earns a certificate you can download and share.</desc>
+      <defs>
+        <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto"><polygon points="0 0, 12 5, 0 10" fill="#444444"/></marker>
+        <marker id="arrow-green" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto"><polygon points="0 0, 12 5, 0 10" fill="#2e7d32"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#faf8f1"/>
+
+      <!-- Zones -->
+      <rect x="40" y="32" width="880" height="140" rx="16" fill="#ebf0f4" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="56" y="60" font-size="16" font-weight="700" fill="#245c99">Part A · Measuring information</text>
+      <rect x="40" y="212" width="880" height="140" rx="16" fill="#f3edf2" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="56" y="240" font-size="16" font-weight="700" fill="#7b4a8f">Part B · Using information</text>
+
+      <!-- Connectors -->
+      <line x1="480" y1="172" x2="480" y2="212" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <polyline points="480,352 480,392 180,392 180,440" fill="none" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="300" y1="480" x2="500" y2="480" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <!-- Connector label -->
+      <rect x="342" y="452" width="116" height="20" fill="#faf8f1"/>
+      <text x="400" y="467" text-anchor="middle" font-size="12" font-weight="700" fill="#276b2b">10 of 12 to pass</text>
+
+      <!-- Part A lessons (5 × 156 wide, 16 gap) -->
+      <rect x="58" y="76" width="156" height="72" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="136" y="106" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Probability</text>
+      <text x="136" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">&amp; logs</text>
+      <rect x="230" y="76" width="156" height="72" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="308" y="106" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">What is</text>
+      <text x="308" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">information?</text>
+      <rect x="402" y="76" width="156" height="72" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="480" y="106" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Surprise</text>
+      <text x="480" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">&amp; the bit</text>
+      <rect x="574" y="76" width="156" height="72" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="652" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Entropy</text>
+      <rect x="746" y="76" width="156" height="72" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="824" y="106" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Shared</text>
+      <text x="824" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">information</text>
+
+      <!-- Part B lessons (4 × 199 wide, 16 gap) -->
+      <rect x="58" y="256" width="199" height="72" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="157.5" y="297" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Compression</text>
+      <rect x="273" y="256" width="199" height="72" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="372.5" y="297" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Noisy channels</text>
+      <rect x="488" y="256" width="199" height="72" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="587.5" y="286" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Cross-entropy</text>
+      <text x="587.5" y="308" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">&amp; KL</text>
+      <rect x="703" y="256" width="199" height="72" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="802.5" y="286" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Information theory</text>
+      <text x="802.5" y="308" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">in AI</text>
+
+      <!-- Final quiz -->
+      <rect x="60" y="440" width="240" height="80" rx="12" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5"/>
+      <text x="180" y="486" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Final quiz</text>
+
+      <!-- Focal: the certificate (larger, double frame like the real one) -->
+      <rect x="500" y="416" width="380" height="128" rx="12" fill="#dff0e0" stroke="#2e7d32" stroke-width="3"/>
+      <rect x="508" y="424" width="364" height="112" rx="8" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+      <text x="690" y="472" text-anchor="middle" font-size="20" font-weight="700" fill="#1c1c1c">Your certificate</text>
+      <text x="690" y="504" text-anchor="middle" font-size="16" fill="#555555">Download and share</text>
+    </svg>
+    </div>
+  </div>
+</body>
+</html>
