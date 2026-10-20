@@ -12,6 +12,16 @@ A **self-paced online course, completely free**, that teaches the ideas behind e
 
 [![Course path: Part A measuring information (probability and logs, what is information, surprise and the bit, entropy, shared information), Part B using information (compression, noisy channels, cross-entropy and KL, information theory in AI), the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-information-theory/)
 
+## 🎞️ Presenting it? Use the slides: [ibrahimsobh.github.io/introduction-to-information-theory/slides.html](https://ibrahimsobh.github.io/introduction-to-information-theory/slides.html)
+
+**20 ready-to-present slides** that follow the course: one key message and a clear diagram per topic, with 🗣️ speaker notes. Made for teachers, trainers and anyone giving a talk on information theory.
+
+⌨️ **←** / **→** move · **N** speaker notes · **T** light or dark · **F** full screen · 🖨️ **Ctrl + P** save as PDF
+
+📄 **[Download the slides as PDF](https://ibrahimsobh.github.io/introduction-to-information-theory/introduction-to-information-theory-slides.pdf)** (20 pages, one slide per page, clickable links)
+
+[![Slide 6 of the Introduction to Information Theory slides: Entropy is the average surprise, with the coin entropy curve rising from 0 to 1 bit for a fair coin, 0.47 bits for a 90/10 coin and 0 for a coin that always lands heads, and the key insight that entropy is highest when you have no idea what comes next](images/slides-preview.png)](https://ibrahimsobh.github.io/introduction-to-information-theory/slides.html)
+
 ## What you'll learn
 
 - What information is, and how bits and entropy measure surprise and uncertainty.
