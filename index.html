@@ -25,12 +25,13 @@
   --text: #0b0b0b;
   --text-2: #52514e;
   --muted: #6b6a65;
-  --accent: #2a78d6;   /* default node / primary */
+  --accent: #246abd;   /* default node / primary; >= 4.5:1 on --surface, --bg, --surface-2 and the lesson band */
   --accent-strong: #2b6bc9; /* primary button background (white text >= 4.5:1) */
   --hot: #eb6834;      /* currently active / being compared */
   --ok: #1baf7a;       /* found / success */
   --bad: #e34948;      /* removed / error */
   --violet: #6250d6;   /* secondary highlight (visited, pointer) */
+  --s1-text: #246abd; --hot-text: #b5481c; --ok-text: #127a55; --bad-text: #c8302f; /* coloured words in text (>= 4.5:1) */
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
   --code-bg: #1e1f22; --code-text: #e6e4dc; --code-hl: rgba(235,104,52,.28);
   --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05);
@@ -46,12 +47,13 @@
   --text: #f0efec;
   --text-2: #c3c2b7;
   --muted: #8e8d86;
-  --accent: #3987e5;
+  --accent: #4a93ea;   /* >= 4.5:1 on --surface, --bg and the lesson band */
   --accent-strong: #2f6fcc;
   --hot: #d95926;
   --ok: #199e70;
   --bad: #e66767;
   --violet: #9085e9;
+  --s1-text: #4a93ea; --hot-text: #e8743f; --ok-text: #2fbf88; --bad-text: #e66767;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
   --code-bg: #0e0e0d; --code-hl: rgba(217,89,38,.32);
   --shadow: 0 1px 2px rgba(0,0,0,.4);
@@ -59,10 +61,13 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 72px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.skip { position: fixed; left: 8px; top: -60px; z-index: 100; padding: 8px 14px; border-radius: 8px; background: var(--accent-strong); color: #fff; font-weight: 600; text-decoration: none; }
+.skip:focus { top: 8px; }
+main:focus { outline: none; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
 a { color: var(--accent); }
 code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
-h1, h2, h3 { line-height: 1.25; }
+h1, h2, h3 { line-height: 1.25; overflow-wrap: break-word; }
 h2 { font-size: 1.75rem; margin: 0 0 .25rem; }
 h3 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
 
@@ -75,6 +80,14 @@ header.top {
 }
 header.top .brand { font-weight: 700; font-size: 1.05rem; margin-right: auto; }
 header.top label { font-size: .85rem; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+@media (max-width: 560px) {
+  header.top { gap: 8px; padding: 0 16px; }
+  header.top .brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .95rem; }
+  header.top label { font-size: 0; gap: 6px; }
+  header.top label #speedVal { font-size: .85rem; }
+  header.top #speed { width: 72px !important; }
+  header.top #themeBtn { flex: none; white-space: nowrap; }
+}
 .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); }
 nav.side {
   position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
@@ -112,7 +125,9 @@ main { background: color-mix(in srgb, var(--bg) 92%, #000 8%); }
   border-radius: 10px 10px 0 0; }
 .band-n { flex: none; font: 600 46px/1 var(--sans); color: var(--accent); min-width: 1ch; text-align: center; }
 .band-k { font-size: .8rem; font-weight: 600; letter-spacing: .03em; color: var(--accent); margin-bottom: 2px; }
-.band h2 { margin: 0; }
+.band h2 { margin: 0; overflow-wrap: anywhere; }
+.band > :last-child { min-width: 0; }
+select { max-width: 100%; }
 .endline { margin-top: 26px; padding-top: 8px; border-top: 1px solid var(--border); color: var(--muted); font-size: .85rem; text-align: center; }
 @media (max-width: 560px) {
   main { padding-left: 8px !important; padding-right: 8px !important; }
@@ -125,6 +140,13 @@ main { background: color-mix(in srgb, var(--bg) 92%, #000 8%); }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); min-width: 0; }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; margin: 20px 0; align-items: start; }
 @media (max-width: 1050px) { .grid2 { grid-template-columns: 1fr; } }
+/* Narrow screens: the code panel goes above its demo card and stays pinned under the header while the
+   demo scrolls past, so the highlighted line and the demo are on screen together. */
+@media (max-width: 1050px) {
+  .grid2 > .code { order: -1; position: sticky; top: 64px; z-index: 5; max-height: 30vh;
+    box-shadow: 0 8px 18px -10px rgb(0 0 0 / .55); }
+}
+@media (max-width: 860px) { .grid2 > .code { top: 113px; } }
 .callout { border-left: 4px solid var(--accent); background: var(--surface); padding: 10px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
 .callout.tip { border-color: var(--ok); }
 .callout.warn { border-color: var(--hot); }
@@ -146,6 +168,7 @@ input[type="text"], input[type="number"], select {
   font: .9rem var(--mono); padding: 7px 9px; border-radius: 8px; width: 84px;
   border: 1px solid var(--border); background: var(--surface); color: var(--text);
 }
+::placeholder { color: var(--muted); opacity: 1; }
 input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- visual area ---------- */
@@ -196,9 +219,11 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 .code .title { color: #8e8d86; font-size: 11px; padding: 0 14px 6px; text-transform: uppercase; letter-spacing: .08em; }
 .code .ln { display: flex; white-space: pre; padding: 0 14px 0 0; transition: background .2s; }
-.code .ln .no { width: 36px; flex: none; text-align: right; padding-right: 12px; color: #5f5e59; user-select: none; }
+.code .ln .no { width: 36px; flex: none; text-align: right; padding-right: 12px; color: #94938c; user-select: none; }
 .code .ln.hl { background: var(--code-hl); box-shadow: inset 3px 0 0 var(--hot); }
-.t-k { color: #c792ea; } .t-sf { color: #f78c6c; } .t-s { color: #c3e88d; } .t-c { color: #7f7e78; font-style: italic; } .t-n { color: #f9c859; } .t-d { color: #82aaff; }
+.code .ln.hl .no { color: var(--code-text); }
+.code:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.t-k { color: #c792ea; } .t-sf { color: #f78c6c; } .t-s { color: #c3e88d; } .t-c { color: #8e8d86; font-style: italic; } .t-n { color: #f9c859; } .t-d { color: #82aaff; }
 
 /* ---------- formulas ---------- */
 .formula { font: 600 1rem var(--mono); background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin: 12px 0; text-align: center; overflow-x: auto; }
@@ -255,7 +280,8 @@ table.cx tbody tr:hover { background: var(--surface-2); }
 .scenario .answer.show { display: block; }
 .scenario select { width: 100%; font-family: var(--sans); }
 ol.ex li { margin-bottom: 6px; }
-footer { color: var(--muted); font-size: .85rem; padding: 32px 0; }
+footer { color: var(--text-2); font-size: .85rem; padding: 32px 0; }
+footer a { color: var(--text-2); } /* footer sits on the darker page, where --accent is below 4.5:1 */
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
 /* ---------- Python course: memory frames, console, tokens ---------- */
@@ -272,7 +298,7 @@ footer { color: var(--muted); font-size: .85rem; padding: 32px 0; }
 .console { background: var(--code-bg); color: var(--code-text); border-radius: 8px; font: 13px/1.55 var(--mono); padding: 10px 12px; min-height: 64px; max-height: 240px; overflow: auto; margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
 .console .in { color: #82aaff; }
 .console .err { color: #ff8a80; }
-.console .dim { color: #7f7e78; }
+.console .dim { color: #8e8d86; }
 .console .new { animation: fadein .35s ease; }
 @keyframes fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 .tok-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 34px 0 12px; min-height: 96px; }
@@ -299,6 +325,7 @@ label.inl { font-size: .85rem; color: var(--text-2); display: inline-flex; align
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <header class="top">
   <div class="brand">📡 Intro to Information Theory</div>
   <label>Animation speed
@@ -310,7 +337,7 @@ label.inl { font-size: .85rem; color: var(--text-2); display: inline-flex; align
 
 <div class="layout">
 <nav class="side" id="nav" aria-label="Sections"></nav>
-<main>
+<main id="main" tabindex="-1">
 
 <script>
 /* ======================================================================
@@ -344,24 +371,37 @@ const DS = (() => {
 
   const reducedMotion = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  let speed = 1;
+  let speed = 1, paused = false;
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  // Pause between animation steps; scaled by the global speed slider.
-  const wait = (mult = 1) => sleep(650 * mult / speed);
+  // Pause between animation steps; scaled by the global speed slider. Holds while a demo is paused.
+  const wait = async (mult = 1) => { await sleep(650 * mult / speed); while (paused) await sleep(120); };
 
   // Run an async animation, disabling the section's buttons until it finishes.
+  // A ▶ button that starts a run turns into Pause / Resume until the run ends
+  // (add class "no-pause" to a ▶ button that starts something interactive, such as a game).
   async function run(root, fn) {
-    if (root.dataset.busy) return;
+    const trigger = window.event && window.event.currentTarget;
+    if (root.dataset.busy) {
+      if (trigger && trigger === root.pauseBtn) {
+        paused = !paused;
+        trigger.textContent = paused ? "▶ Resume" : "⏸ Pause";
+      }
+      return;
+    }
     root.dataset.busy = "1";
     // Only touch buttons that are currently enabled, so ones disabled for other
     // reasons stay disabled afterwards.
     const btns = [...root.querySelectorAll("button:not(.always)")].filter(b => !b.disabled);
     const focused = document.activeElement;
-    btns.forEach(b => (b.disabled = true));
+    const play = btns.includes(trigger) && trigger.textContent.trim().startsWith("▶") && !trigger.matches(".no-pause") ? trigger : null;
+    const playLabel = play && play.textContent;
+    if (play) { root.pauseBtn = play; play.textContent = "⏸ Pause"; }
+    btns.forEach(b => (b.disabled = b !== play));
     try { await fn(); }
     catch (e) { console.error(e); }
     finally {
       delete root.dataset.busy;
+      if (play) { play.textContent = playLabel; root.pauseBtn = null; paused = false; }
       btns.forEach(b => (b.disabled = false));
       // Disabling a focused button drops focus to <body>; give it back.
       const lost = !document.activeElement || document.activeElement === document.body;
@@ -391,6 +431,10 @@ const DS = (() => {
   function code(container, src, title) {
     const lines = src.replace(/^\n+|\s+$/g, "").split("\n");
     container.innerHTML = "";
+    // Focusable so keyboard users can scroll long or wide code
+    container.tabIndex = 0;
+    container.setAttribute("role", "region");
+    container.setAttribute("aria-label", title ? title + " code" : "Code");
     if (title) container.append(el("div", { class: "title" }, title));
     const rows = lines.map((t, i) => {
       const r = el("div", { class: "ln" }, el("span", { class: "no" }, String(i + 1)), el("span", { html: hlPy(t) || " " }));
@@ -623,7 +667,8 @@ const KIT = (() => {
     #intro .pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 0; }
     #intro .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
     #intro .pillar .p-ico { font-size: 1.4rem; line-height: 1; }
-    #intro .pillar h3 { margin: 8px 0 4px; font-size: 1rem; }
+    #intro h2 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
+    #intro .pillar h2 { margin: 8px 0 4px; font-size: 1rem; }
     #intro .pillar p { margin: 0; color: var(--text-2); font-size: .9rem; line-height: 1.45; }
     #intro .path { list-style: none; counter-reset: step; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
     #intro .path li { counter-increment: step; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; align-items: start; }
@@ -636,22 +681,22 @@ const KIT = (() => {
     @media (max-width: 700px) { #intro .pillars { grid-template-columns: minmax(0, 1fr); } }
     #intro .ckey small { color: var(--text-2); font-size: .85rem; line-height: 1.35; display: block; }
     #intro .map { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
-    #intro .map h4 { margin: 0 0 6px; font-size: .9rem; color: var(--text-2); }
+    #intro .map h3 { margin: 0 0 6px; font-size: .9rem; color: var(--text-2); }
     @media (max-width: 700px) { #intro .map { grid-template-columns: minmax(0, 1fr); } }
     #intro .learn { list-style: none; margin: 8px 0 18px; padding: 0; display: grid; gap: 8px; }
     #intro .learn li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; }
     #intro .learn li span { font-size: 1.15rem; line-height: 1.5; }
   </style>
-  <h3>What you'll learn</h3>
+  <h2>What you'll learn</h2>
   <ul class="learn">
     <li><span aria-hidden="true">🎲</span><div>What information is, and how bits and entropy measure surprise and uncertainty.</div></li>
     <li><span aria-hidden="true">📦</span><div>The big ideas behind compression and error correction, through intuition, not proofs.</div></li>
     <li><span aria-hidden="true">🤖</span><div>How cross-entropy, KL divergence and mutual information power modern AI models.</div></li>
   </ul>
   <div class="pillars">
-    <div class="pillar"><div class="p-ico" aria-hidden="true">📘</div><h3>Theory</h3><p>Surprise, entropy, shared information, compression, noisy channels and cross-entropy, in plain words with everyday examples (coins, weather, guessing games) and simple diagrams.</p></div>
-    <div class="pillar"><div class="p-ico" aria-hidden="true">🛠️</div><h3>Practice</h3><p>Play a guessing game in bits, sweep a coin across the entropy curve, slide two information circles together, compress a text, protect bits from noise and train a classifier. A quiz in every lesson.</p></div>
-    <div class="pillar"><div class="p-ico" aria-hidden="true">🎓</div><h3>Certificate</h3><p>Score 80% or more on the final quiz to get a certificate with your name, ready to print, save as PDF or download as an image.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">📘</div><h2>Theory</h2><p>Surprise, entropy, shared information, compression, noisy channels and cross-entropy, in plain words with everyday examples (coins, weather, guessing games) and simple diagrams.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">🛠️</div><h2>Practice</h2><p>Play a guessing game in bits, sweep a coin across the entropy curve, slide two information circles together, compress a text, protect bits from noise and train a classifier. A quiz in every lesson.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">🎓</div><h2>Certificate</h2><p>Score 80% or more on the final quiz to get a certificate with your name, ready to print, save as PDF or download as an image.</p></div>
   </div>
   <ul class="facts" aria-label="Course facts">
     <li><b>9</b> lessons</li>
@@ -661,7 +706,7 @@ const KIT = (() => {
     <li>Self-paced · works offline</li>
   </ul>
 
-  <h3>How the course works</h3>
+  <h2>How the course works</h2>
   <ol class="path">
     <li><b>Part A, then Part B</b><span>Part A (lessons 1-5) builds the tools to measure information; Part B (lessons 6-9) uses them for compression, noise and AI.</span></li>
     <li><b>In each lesson</b><span>read the idea, try the interactive demo, follow the code beside it, then take the lesson quiz.</span></li>
@@ -670,8 +715,8 @@ const KIT = (() => {
   <div class="callout tip"><b>Tip:</b> The dark code panels show short Python sketches of each demo, and the highlighted line follows the animation; reading them is optional and you never need to run anything. Use the <b>Animation speed</b> slider at the top to slow down any demo, and retake any quiz as often as you like.</div>
 
 
-  <h3>Course map</h3>
-  <div class="map"><div><h4>Part A · Measuring information</h4><div class="order" style="margin:0"><a href="#probability">Probability and logs<small>halvings, odds and averages</small></a><a href="#information">What is information?<small>Shannon's communication model</small></a><a href="#bit">Surprise and the bit<small>rare events carry more bits</small></a><a href="#entropy">Entropy<small>average surprise of a source</small></a><a href="#mutual">Shared information<small>joint, conditional, mutual</small></a></div></div><div><h4>Part B · Using information</h4><div class="order" style="margin:0;counter-reset:step 5"><a href="#compression">Compression<small>short codes for common symbols</small></a><a href="#noise">Noisy channels<small>redundancy, errors, capacity</small></a><a href="#crossentropy">Cross-entropy and KL<small>the cost of a wrong belief</small></a><a href="#ai">Information theory in AI<small>loss, trees, perplexity</small></a></div></div></div>
+  <h2>Course map</h2>
+  <div class="map"><div><h3>Part A · Measuring information</h3><div class="order" style="margin:0"><a href="#probability">Probability and logs<small>halvings, odds and averages</small></a><a href="#information">What is information?<small>Shannon's communication model</small></a><a href="#bit">Surprise and the bit<small>rare events carry more bits</small></a><a href="#entropy">Entropy<small>average surprise of a source</small></a><a href="#mutual">Shared information<small>joint, conditional, mutual</small></a></div></div><div><h3>Part B · Using information</h3><div class="order" style="margin:0;counter-reset:step 5"><a href="#compression">Compression<small>short codes for common symbols</small></a><a href="#noise">Noisy channels<small>redundancy, errors, capacity</small></a><a href="#crossentropy">Cross-entropy and KL<small>the cost of a wrong belief</small></a><a href="#ai">Information theory in AI<small>loss, trees, perplexity</small></a></div></div></div>
 </section>
 
 <style>
@@ -797,7 +842,7 @@ const IT = (() => {
           <div class="stat"><span>Sum of probabilities: <b class="pr-sum">1.00</b></span><span>Average roll: <b class="pr-avg">3.50</b></span></div>
         </div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -805,14 +850,14 @@ const IT = (() => {
   </div>
 
   <h3>Probability in three rules</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Rule</th><th>What it means</th><th>Example</th></tr></thead>
     <tbody>
       <tr><td><b>Between 0 and 1</b></td><td>0 = impossible, 1 = certain. Percentages are the same idea: 0.5 = 50%.</td><td>A fair coin lands heads with probability 0.5.</td></tr>
       <tr><td><b>All outcomes add up to 1</b></td><td>Something must happen, so the slices make one whole.</td><td>A fair die gives each face 1/6, and 6 × 1/6 = 1.</td></tr>
       <tr><td><b>Independent events multiply</b></td><td>When one event does not change the other, the chance of both is the product.</td><td>Heads <i>and</i> a six: 1/2 × 1/6 = 1/12.</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>A <b>distribution</b> is the full list of outcomes with their probabilities, like the six bars in the loaded-die mode. Every later lesson starts from a distribution.</p>
 
   <h3>The average of a distribution</h3>
@@ -820,7 +865,7 @@ const IT = (() => {
 
   <h3>Power and log: one question, two directions</h3>
   <div class="formula">2<sup>b</sup> = n &nbsp;⇔&nbsp; log₂(n) = b<small>the power goes from bits to the number of codes; the log goes back from the number of things to the bits needed</small></div>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>n</th><th>As a power of 2</th><th class="big">log₂(n)</th><th>Read it as</th></tr></thead>
     <tbody>
       <tr><td>1</td><td>2⁰</td><td class="big">0</td><td>one thing needs no bits at all</td></tr>
@@ -831,7 +876,7 @@ const IT = (() => {
       <tr><td>1/2</td><td>2⁻¹</td><td class="big">−1</td><td>a negative power divides: 2⁻¹ = 1/2</td></tr>
       <tr><td>1/8</td><td>2⁻³</td><td class="big">−3</td><td>2⁻³ = 1 / (2 × 2 × 2)</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Read backwards, log₂ also counts <b>halvings</b>: 16 → 8 → 4 → 2 → 1 takes 4 halvings, so log₂(16) = 4. Doubling 4 times goes up from 1 to 16; halving 4 times comes back down. Lesson 3 uses this to define the bit.</p>
   <p><b>How to read the plot:</b> the horizontal axis is x, the vertical axis is log₂(x). The curve passes through (1, 0), because 2⁰ = 1. It climbs fast at first and then slowly: going from 16 to 32 adds only one step, because doubling x always adds exactly 1. Numbers between powers land in between: 6 lies between 4 and 8, so log₂(6) is between 2 and 3 (about 2.58). Below 1 the curve drops under 0 and falls steeply as x gets close to 0, as the zoomed plot shows. Flip that negative part upside down and you get the <b>surprise curve</b> of lesson 3. Probabilities are numbers between 0 and 1, so their log₂ is 0 or negative: that is the part of the curve the rest of the course uses most.</p>
 
@@ -1000,7 +1045,7 @@ print(avg)                     # 4.5`, "probability_and_logs.py");
     <div class="card">
       <div class="controls">
         <input type="text" class="in-msg wide" maxlength="10" value="HELLO" aria-label="Message to send (up to 10 letters)">
-        <label class="inl"><input type="checkbox" class="in-noise" style="accent-color:var(--hot)"> Noise</label>
+        <label class="inl"><input type="checkbox" class="in-noise" style="accent-color:var(--hot-text)"> Noise</label>
         <span class="sep"></span>
         <button class="in-send">▶ Send</button>
         <button class="secondary in-reset">Reset</button>
@@ -1011,7 +1056,7 @@ print(avg)                     # 4.5`, "probability_and_logs.py");
         <div class="flow in-flow"></div>
         <div class="in-rows" style="margin-top:14px"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1019,7 +1064,7 @@ print(avg)                     # 4.5`, "probability_and_logs.py");
   </div>
 
   <h3>The five parts, in everyday examples</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Part</th><th>Phone call</th><th>Wi-Fi photo upload</th><th>Where noise comes from</th></tr></thead>
     <tbody>
       <tr><td><b>Source</b></td><td>your voice</td><td>the photo file</td><td></td></tr>
@@ -1028,18 +1073,18 @@ print(avg)                     # 4.5`, "probability_and_logs.py");
       <tr><td><b>Decoder</b></td><td>the other phone turns bits back into sound</td><td>the router rebuilds the file</td><td></td></tr>
       <tr><td><b>Receiver</b></td><td>your friend's ear</td><td>the cloud server</td><td></td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Information is not meaning</h3>
   <p>Shannon left meaning out on purpose. For an engineer, the job is to get the message across exactly, whatever it says. This one choice made the theory work for every kind of data at once.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Message</th><th>Expected?</th><th>Information</th></tr></thead>
     <tbody>
       <tr><td>"The sun rose this morning."</td><td>almost certain</td><td>almost none</td></tr>
       <tr><td>"The coin landed heads."</td><td>50/50</td><td>some (exactly 1 bit, lesson 3)</td></tr>
       <tr><td>"It snowed in the desert."</td><td>very unlikely</td><td>a lot</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Shannon's two big questions</h3>
   <ol class="ex">
@@ -1126,7 +1171,7 @@ print(text)                    # receiver`, "send_message.py");
       const span = DS.el("span", { style: { marginRight: "8px", display: "inline-block" } });
       b.forEach((bit, j) => {
         const hit = flips.some(([a, c]) => a === i && c === j);
-        span.append(DS.el("span", hit ? { style: { color: "var(--bad)", fontWeight: "700", textDecoration: "underline" } } : {}, bit));
+        span.append(DS.el("span", hit ? { style: { color: "var(--bad-text)", fontWeight: "700", textDecoration: "underline" } } : {}, bit));
       });
       recvRow.append(span);
     });
@@ -1193,7 +1238,7 @@ print(text)                    # receiver`, "send_message.py");
         <div class="sub-cap">Surprise curve · <span class="nt">y = −log₂(p)</span> · orange dots = the event cards · blue = selected</div>
         <div class="bt-plot"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1205,7 +1250,7 @@ print(text)                    # receiver`, "send_message.py");
   <p>Both forms give the same number: lesson 1 showed that <code>log₂</code> of a fraction is negative, and the minus sign makes the surprise positive. A fair coin has p = 1/2, so heads gives −log₂(1/2) = 1 bit: the same as the answer to one fair yes/no question.</p>
   <p><b>Surprise is information.</b> The surprise of an event is exactly the amount of information you get when it happens, which is why it is also called <b>self-information</b> or <b>information content</b>. Information (lesson 2) and surprise are two names for one number, −log₂(p): the less likely the event, the more you learn when it happens.</p>
   <p>Why one yes/no answer is one bit: a fair yes/no answer <b>halves</b> the possibilities. To find one number out of 16 by asking "is it in the lower half?": 16 → 8 → 4 → 2 → 1, which is 4 answers, so 4 bits = log₂(16), the halving from lesson 1. The same rule appears in the demo's formula strip and as the dashed steps on the curve: halve p, and the surprise grows by exactly +1 bit.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Event</th><th>Probability p</th><th>1/p</th><th>Surprise −log₂(p)</th></tr></thead>
     <tbody>
       <tr><td>The sun rises</td><td>almost 1</td><td>almost 1</td><td class="big">≈ 0 bits</td></tr>
@@ -1215,7 +1260,7 @@ print(text)                    # receiver`, "send_message.py");
       <tr><td>Ace of spades from a full deck (52 playing cards)</td><td>1/52</td><td>52</td><td class="big">≈ 5.70 bits</td></tr>
       <tr><td>Winning a 1-in-a-million draw</td><td>1/1,000,000</td><td>1,000,000</td><td class="big">≈ 19.93 bits</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>The surprise curve</h3>
   <p>The plot under the event cards draws surprise for every probability: y = −log₂(p), for p between 0 and 1. It is the negative part of the log curve from lesson 1 (where x is below 1), flipped upside down by the minus sign. How to read it: at p = 1 the curve touches 0 (no surprise); as p shrinks, the curve rises, slowly at first and then very steeply near p = 0. The dashed purple steps show the key pattern: going from p = 1 to 1/2 to 1/4 to 1/8 adds exactly <b>+1 bit</b> each time. A 1-in-a-million event (19.93 bits) is far above the top of the chart.</p>
@@ -1357,7 +1402,7 @@ for name, p in events.items():
         <div class="meter"><span style="min-width:96px">Entropy H</span><div class="bar en-stack" style="display:flex;height:16px"></div><b class="en-hv">1.00 bit</b></div>
         <table class="terms en-terms"></table>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1370,14 +1415,14 @@ for name, p in events.items():
   <p>Heads is common, so its surprise is tiny (0.152 bits). Tails is rare and surprising (3.32 bits), but it happens only 10% of the time. On average you get less than half a bit per toss. The coloured bar under the demo shows the same split: the tails segment (0.332) is more than twice the heads segment (0.137), so the <i>rare</i> outcome carries most of the entropy.</p>
 
   <h3>Three properties of entropy</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Property</th><th>Why</th><th>In the demo</th></tr></thead>
     <tbody>
       <tr><td><b>0 when the outcome is certain</b></td><td>No surprise is possible.</td><td>"Always heads" gives H = 0.</td></tr>
       <tr><td><b>Largest when all outcomes are equally likely</b></td><td>You have no clue which one comes next.</td><td>Fair coin: 1 bit. Four equal weathers: 2 bits.</td></tr>
       <tr><td><b>Maximum = log₂(number of outcomes)</b></td><td>Equal outcomes behave like the 16 → 8 → 4 → 2 → 1 halving from lessons 1 and 3: n equal outcomes need log₂(n) fair yes/no answers.</td><td>log₂(2) = 1, log₂(4) = 2.</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>The "Mixed" weather preset (sunny 1/2, cloudy 1/4, rainy 1/8, snowy 1/8) gives a clean example: the surprises are 1, 2, 3 and 3 bits, so H = 1/2 × 1 + 1/4 × 2 + 1/8 × 3 + 1/8 × 3 = 0.5 + 0.5 + 0.375 + 0.375 = <b>1.75 bits</b>. That is less than the 2-bit maximum, because sunny days are predictable.</p>
 
   <h3>Entropy of English</h3>
@@ -1418,7 +1463,7 @@ print(entropy([0.25] * 4))  # 2.0`, "entropy.py");
   function terms(labels, ps, cols) {
     const t = $(".en-terms"); t.innerHTML = "";
     t.append(DS.el("tr", {}, DS.el("th", {}, "Outcome"), DS.el("th", {}, "p"), DS.el("th", { html: "surprise<br><code>−log₂(p)</code>" }), DS.el("th", { html: "p × surprise<br><code>−p log₂(p)</code>" })));
-    ps.forEach((p, k) => t.append(DS.el("tr", {}, DS.el("td", {}, DS.el("span", { style: { color: cols[k] } }, "■ "), labels[k]), DS.el("td", {}, String(+p.toFixed(3))),
+    ps.forEach((p, k) => t.append(DS.el("tr", {}, DS.el("td", {}, DS.el("span", { style: { color: cols[k] }, "aria-hidden": "true" }, "■ "), labels[k]), DS.el("td", {}, String(+p.toFixed(3))),
       DS.el("td", {}, p > 0 ? IT.f(Math.log2(1 / p)) : "–"), DS.el("td", {}, p > 0 ? IT.f(p * Math.log2(1 / p), 3) : "0"))));
     t.append(DS.el("tr", { class: "sum" }, DS.el("td", {}, "Sum = H"), DS.el("td", {}, ""), DS.el("td", {}, ""), DS.el("td", {}, IT.f(IT.H(ps), 3))));
   }
@@ -1522,14 +1567,14 @@ print(entropy([0.25] * 4))  # 2.0`, "entropy.py");
   <p>Here X and Y are <b>random variables</b>: quantities whose value is decided by chance, each with its own distribution. H(X) means the entropy of X's distribution, the same quantity lesson 4 wrote as H(p).</p>
 
   <h3>Three new quantities</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Name</th><th>Written</th><th>Meaning</th></tr></thead>
     <tbody>
       <tr><td><b>Joint entropy</b></td><td><code>H(X,Y)</code></td><td>the entropy of the pair: uncertainty about both together (here, the 4 combinations rain/dry × umbrella/no umbrella)</td></tr>
       <tr><td><b>Conditional entropy</b></td><td><code>H(X|Y)</code></td><td>the uncertainty about X that is <i>left</i> after you know Y (read "|" as "given")</td></tr>
       <tr><td><b>Mutual information</b></td><td><code>I(X;Y)</code></td><td>the uncertainty about X that knowing Y <i>removes</i>: I = H(X) − H(X|Y)</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>In the demo, the slider sets how often the umbrella matches the weather (umbrella on rainy days, no umbrella on dry days). To keep the numbers simple, half of the days are rainy, so the weather alone has H(X) = 1 bit, and the umbrella alone also has H(Y) = 1 bit. The <b>joint table</b> shows the probability of each of the 4 combinations.</p>
 
   <div class="w-mi">
@@ -1549,7 +1594,7 @@ print(entropy([0.25] * 4))  # 2.0`, "entropy.py");
         <table class="mini-table mi-joint"></table>
         <div class="stat mi-stat"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1561,14 +1606,14 @@ print(entropy([0.25] * 4))  # 2.0`, "entropy.py");
   <div class="formula">I(X;Y) = H(X) + H(Y) − H(X,Y)<small>adding the two circles counts the overlap twice; subtracting the whole coloured area leaves just the overlap</small></div>
   <p>A worked example for the 80% setting. The joint table has 0.4 for rain + umbrella, 0.4 for dry + no umbrella, and 0.1 for each of the two mismatches (0.4 + 0.4 + 0.1 + 0.1 = 1). Then:</p>
   <div class="formula">H(X,Y) = −(2 × 0.4 × log₂(0.4) + 2 × 0.1 × log₂(0.1)) ≈ 0.8 × 1.32 + 0.2 × 3.32 ≈ 1.06 + 0.66 = 1.72 bits<small>I(X;Y) = 1 + 1 − 1.72 = 0.28 bits, and H(X|Y) = 1 − 0.28 = 0.72 bits</small></div>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Setting</th><th>H(X,Y)</th><th>I(X;Y)</th><th>H(X|Y)</th><th>Meaning</th></tr></thead>
     <tbody>
       <tr><td><b>No link (50%)</b></td><td>2 bits</td><td>0</td><td>1 bit</td><td>The umbrella is random: seeing it teaches you nothing. The circles do not overlap.</td></tr>
       <tr><td><b>Usually (80%)</b></td><td>1.72 bits</td><td>0.28 bits</td><td>0.72 bits</td><td>The umbrella helps a bit, but you still have doubt.</td></tr>
       <tr><td><b>Always (100%)</b></td><td>1 bit</td><td>1 bit</td><td>0</td><td>The umbrella tells you the weather exactly. The circles sit on top of each other.</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip"><b>Two useful facts:</b> mutual information is symmetric (the weather tells you as much about the umbrella as the umbrella tells you about the weather), and it catches <i>any</i> kind of relationship, not only straight-line ones (correlation, the usual measure in statistics, only sees straight-line links).</div>
 
   <h3>Where it shows up</h3>
@@ -1697,7 +1742,7 @@ H_X_given_Y = H_X - I          # 0.72`, "mutual_information.py");
         <div class="meter"><span style="min-width:120px">Our code</span><div class="bar"><i class="cm-m2 ok"></i></div><b class="cm-v2">–</b></div>
         <div class="meter"><span style="min-width:120px">Entropy limit</span><div class="bar"><i class="cm-m3 hot"></i></div><b class="cm-v3">–</b></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1705,7 +1750,7 @@ H_X_given_Y = H_X - I          # 0.72`, "mutual_information.py");
   </div>
 
   <h3>How to read the meters</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Meter</th><th>What it means</th><th>Skewed text ABACABAD…</th></tr></thead>
     <tbody>
       <tr><td><b>Plain text</b></td><td>how computers usually store a letter: 8 bits (ASCII, lesson 2)</td><td>8 bits</td></tr>
@@ -1713,7 +1758,7 @@ H_X_given_Y = H_X - I          # 0.72`, "mutual_information.py");
       <tr><td><b>Our code</b></td><td>short codes for common letters; the average length per letter</td><td>1.75 bits</td></tr>
       <tr><td><b>Entropy limit</b></td><td>the entropy of the letter counts: no lossless letter-by-letter code can go lower on average</td><td>1.75 bits</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Where the skewed numbers come from: the 32 letters are A ×16, B ×8, C ×4 and D ×4, so the probabilities are 1/2, 1/4, 1/8 and 1/8. The codes are A = <code>0</code>, B = <code>10</code>, C = <code>110</code>, D = <code>111</code>. Total length = 16 × 1 + 8 × 2 + 4 × 3 + 4 × 3 = 56 bits, and 56 ÷ 32 = <b>1.75 bits per letter</b>. That is exactly the entropy of the "Mixed" weather in lesson 4, because the probabilities are the same. Plain text would need 32 × 8 = 256 bits.</p>
   <div class="callout tip"><b>Code length = surprise.</b> Look at the code lengths: 1, 2, 3 and 3 bits are exactly −log₂(1/2), −log₂(1/4), −log₂(1/8) and −log₂(1/8), the surprises of the four letters (lesson 3). A good code spends about −log₂(p) bits on a symbol of probability p, so its average length is the average surprise: the entropy. This is why entropy is the compression limit.</div>
   <div class="callout tip"><b>Why the receiver can decode it:</b> no code is the start of another code (<code>0</code>, <code>10</code>, <code>110</code>, <code>111</code>). So the bits <code>010110</code> can only be split one way, <code>0|10|110</code>, which is A B C. No separators are needed.</div>
@@ -1722,7 +1767,7 @@ H_X_given_Y = H_X - I          # 0.72`, "mutual_information.py");
   <p>When every letter is equally likely, there are no "common" letters to make short. The entropy then equals the fixed length: 16 equally likely letters need log₂(16) = 4 bits each, whatever trick you use. Try the <b>Random letters</b> text: our code is close to 4 bits and can't beat the entropy. The same is true for files that are already compressed: their bits look random, so zipping a zip file saves almost nothing.</p>
 
   <h3>Lossless and lossy</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>Lossless</th><th>Lossy</th></tr></thead>
     <tbody>
       <tr><td><b>What it keeps</b></td><td>every bit: you get back the exact original</td><td>only what people notice; small details are thrown away</td></tr>
@@ -1730,7 +1775,7 @@ H_X_given_Y = H_X - I          # 0.72`, "mutual_information.py");
       <tr><td><b>Examples</b></td><td>ZIP files, PNG images, FLAC audio</td><td>JPEG photos, MP3 and AAC music, streaming video</td></tr>
       <tr><td><b>Use when</b></td><td>every bit matters: documents, code, data</td><td>a close copy is enough: photos, sound, video</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Real tools such as ZIP go further than this demo: besides counting single letters, they also find repeated pieces ("THE " appears many times) and replace them with short references. The limit is still entropy, but measured on the text with all its patterns, which is much lower (about 1 bit per English letter, lesson 4).</p>
 
   <h3>Where it shows up</h3>
@@ -1857,7 +1902,7 @@ print(len(encoded) / len(text))   # 1.75`, "compress.py");
         <div class="nz-rows"></div>
         <div class="stat nz-stat"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1865,14 +1910,14 @@ print(len(encoded) / len(text))   # 1.75`, "compress.py");
   </div>
 
   <h3>Three protections compared</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Protection</th><th>Extra cost</th><th>Detects an error?</th><th>Fixes an error?</th><th>Fails when</th></tr></thead>
     <tbody>
       <tr><td><b>None</b></td><td>0</td><td>no</td><td>no</td><td>any bit flips</td></tr>
       <tr><td><b>Parity bit</b> (1 per 4 bits)</td><td>+25% (5 bits for every 4)</td><td>yes, one flip per block</td><td>no: it can only ask for a resend</td><td>2 flips in one block cancel out and hide</td></tr>
       <tr><td><b>Repeat ×3</b></td><td>+200% (3 bits for every 1)</td><td>yes</td><td>yes, one flip per group of three</td><td>2 of the 3 copies flip</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p><b>How the parity bit works:</b> the sender counts the 1s in a block of 4 bits and adds one extra bit so the total number of 1s is even. For <code>1011</code> (three 1s) the extra bit is 1, so it sends <code>10111</code>. The receiver counts again: if the count is odd, some bit flipped. It cannot tell which one, so it asks for the block again.</p>
   <p><b>How much Repeat ×3 helps:</b> with 10% noise, a bit is decoded wrong only if 2 or all 3 copies flip. That chance is 3 × 0.1 × 0.1 × 0.9 + 0.1 × 0.1 × 0.1 = 0.027 + 0.001 = 0.028, about 2.8% instead of 10%. Better, but it costs three times the bits.</p>
 
@@ -1882,14 +1927,14 @@ print(len(encoded) / len(text))   # 1.75`, "compress.py");
   <div class="callout tip"><b>Compression and protection work together:</b> lesson 6 removes useless redundancy (repeated, predictable patterns), and this lesson adds useful redundancy (planned check bits). Real systems do both: compress first, then protect.</div>
 
   <h3>Where it shows up</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Code</th><th>Used in</th></tr></thead>
     <tbody>
       <tr><td><b>Parity and Hamming codes</b></td><td>computer memory that corrects its own errors (ECC memory)</td></tr>
       <tr><td><b>Reed–Solomon codes</b></td><td>QR codes (they still scan when partly damaged), CDs and DVDs, deep-space probes</td></tr>
       <tr><td><b>LDPC and turbo codes</b></td><td>Wi-Fi, 4G and 5G phones, digital TV: codes that come close to Shannon's limit</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="quizbox"></div>
 </section>
 <script>
@@ -2040,13 +2085,13 @@ decoded = [majority(received[i:i + 3])
   <div class="formula">KL(p‖q) = H(p,q) − H(p)<small>the extra bits you pay because q is not p; always 0 or more</small></div>
 
   <h3>Step by step: comparing two distributions</h3>
-  <p>Cross-entropy is often used to measure how <b>different</b> two distributions are: the more q disagrees with p, the larger H(p,q). Take a random variable X (lesson 5) with three possible events: drawing a <span style="color:var(--bad);font-weight:700">red</span>, <span style="color:var(--ok);font-weight:700">green</span> or <span style="color:var(--s1);font-weight:700">blue</span> ball. Two distributions describe it:</p>
+  <p>Cross-entropy is often used to measure how <b>different</b> two distributions are: the more q disagrees with p, the larger H(p,q). Take a random variable X (lesson 5) with three possible events: drawing a <span style="color:var(--bad-text);font-weight:700">red</span>, <span style="color:var(--ok-text);font-weight:700">green</span> or <span style="color:var(--s1-text);font-weight:700">blue</span> ball. Two distributions describe it:</p>
   <table class="cx" style="max-width:520px">
     <thead><tr><th>Event</th><th>p</th><th>q</th></tr></thead>
     <tbody>
-      <tr><td><b style="color:var(--bad)">● red</b></td><td>0.10</td><td>0.80</td></tr>
-      <tr><td><b style="color:var(--ok)">● green</b></td><td>0.40</td><td>0.15</td></tr>
-      <tr><td><b style="color:var(--s1)">● blue</b></td><td>0.50</td><td>0.05</td></tr>
+      <tr><td><b style="color:var(--bad-text)">● red</b></td><td>0.10</td><td>0.80</td></tr>
+      <tr><td><b style="color:var(--ok-text)">● green</b></td><td>0.40</td><td>0.15</td></tr>
+      <tr><td><b style="color:var(--s1-text)">● blue</b></td><td>0.50</td><td>0.05</td></tr>
     </tbody>
   </table>
   <p>Both columns add up to 1 (0.10 + 0.40 + 0.50 = 1 and 0.80 + 0.15 + 0.05 = 1). The demo computes the formula one event at a time. Pick a direction: <b>H(p, q)</b> takes the weights (how often each event happens) from p and the surprises from q; <b>H(q, p)</b> swaps the roles. The coloured bar at the bottom adds each event's term, so you can see which event costs the most.</p>
@@ -2080,7 +2125,7 @@ decoded = [majority(received[i:i + 3])
         <div class="sub-cap cs-sumcap">Running total · each segment = one event's term (bits)</div>
         <div class="cs-sums"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2088,19 +2133,19 @@ decoded = [majority(received[i:i + 3])
   </div>
 
   <h3>Why H(p, q) is not equal to H(q, p)</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Event</th><th>H(p, q) term: −p log₂(q)</th><th>H(q, p) term: −q log₂(p)</th></tr></thead>
     <tbody>
-      <tr><td><b style="color:var(--bad)">● red</b></td><td>−0.10 × log₂(0.80) = 0.10 × 0.32 ≈ 0.032</td><td><b>−0.80 × log₂(0.10) = 0.80 × 3.32 ≈ 2.658</b></td></tr>
-      <tr><td><b style="color:var(--ok)">● green</b></td><td>−0.40 × log₂(0.15) = 0.40 × 2.74 ≈ 1.095</td><td>−0.15 × log₂(0.40) = 0.15 × 1.32 ≈ 0.198</td></tr>
-      <tr><td><b style="color:var(--s1)">● blue</b></td><td><b>−0.50 × log₂(0.05) = 0.50 × 4.32 ≈ 2.161</b></td><td>−0.05 × log₂(0.50) = 0.05 × 1.00 = 0.050</td></tr>
+      <tr><td><b style="color:var(--bad-text)">● red</b></td><td>−0.10 × log₂(0.80) = 0.10 × 0.32 ≈ 0.032</td><td><b>−0.80 × log₂(0.10) = 0.80 × 3.32 ≈ 2.658</b></td></tr>
+      <tr><td><b style="color:var(--ok-text)">● green</b></td><td>−0.40 × log₂(0.15) = 0.40 × 2.74 ≈ 1.095</td><td>−0.15 × log₂(0.40) = 0.15 × 1.32 ≈ 0.198</td></tr>
+      <tr><td><b style="color:var(--s1-text)">● blue</b></td><td><b>−0.50 × log₂(0.05) = 0.50 × 4.32 ≈ 2.161</b></td><td>−0.05 × log₂(0.50) = 0.05 × 1.00 = 0.050</td></tr>
       <tr><td><b>Total</b></td><td class="big">3.288 bits</td><td class="big">2.906 bits</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>The weight of each term comes from the <i>first</i> distribution and the surprise from the <i>second</i>, so swapping them changes which event dominates:</p>
   <ul>
-    <li><b>H(p, q):</b> the big cost is <b style="color:var(--s1)">blue</b>. Under p it happens half the time (0.50), but q gave it only 5%, so every blue ball costs 4.32 bits. 0.50 × 4.32 ≈ 2.16 bits, about two thirds of the total.</li>
-    <li><b>H(q, p):</b> the big cost is <b style="color:var(--bad)">red</b>. q expects red 80% of the time, but p gives it only 10%, so every red costs 3.32 bits. 0.80 × 3.32 ≈ 2.66 bits.</li>
+    <li><b>H(p, q):</b> the big cost is <b style="color:var(--s1-text)">blue</b>. Under p it happens half the time (0.50), but q gave it only 5%, so every blue ball costs 4.32 bits. 0.50 × 4.32 ≈ 2.16 bits, about two thirds of the total.</li>
+    <li><b>H(q, p):</b> the big cost is <b style="color:var(--bad-text)">red</b>. q expects red 80% of the time, but p gives it only 10%, so every red costs 3.32 bits. 0.80 × 3.32 ≈ 2.66 bits.</li>
   </ul>
   <p>Different events dominate in each direction, with different weights and surprises, so the two totals differ: 3.288 ≠ 2.906. That is why cross-entropy is a measure of difference but <b>not a true distance</b>. A distance would be the same in both directions, and it would be 0 for two identical distributions. Cross-entropy is not 0 even then: H(p, p) is the entropy of p, about 1.36 bits here. KL divergence, next, removes that part.</p>
 
@@ -2137,7 +2182,7 @@ decoded = [majority(received[i:i + 3])
         <div class="sub-cap">Waterfall · each event moves the total right (+) or left (−) · dashed line = 0</div>
         <div class="kl-falls"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2145,19 +2190,19 @@ decoded = [majority(received[i:i + 3])
   </div>
 
   <h3>Why KL(p‖q) is not equal to KL(q‖p)</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Event</th><th>KL(p‖q) term: p × log₂(p/q)</th><th>KL(q‖p) term: q × log₂(q/p)</th></tr></thead>
     <tbody>
-      <tr><td><b style="color:var(--bad)">● red</b></td><td>0.10 × log₂(0.10/0.80) = 0.10 × (−3) = −0.300</td><td><b>0.80 × log₂(0.80/0.10) = 0.80 × 3 = 2.400</b></td></tr>
-      <tr><td><b style="color:var(--ok)">● green</b></td><td>0.40 × log₂(0.40/0.15) ≈ 0.40 × 1.42 ≈ 0.566</td><td>0.15 × log₂(0.15/0.40) ≈ 0.15 × (−1.42) ≈ −0.212</td></tr>
-      <tr><td><b style="color:var(--s1)">● blue</b></td><td><b>0.50 × log₂(0.50/0.05) ≈ 0.50 × 3.32 ≈ 1.661</b></td><td>0.05 × log₂(0.05/0.50) ≈ 0.05 × (−3.32) ≈ −0.166</td></tr>
+      <tr><td><b style="color:var(--bad-text)">● red</b></td><td>0.10 × log₂(0.10/0.80) = 0.10 × (−3) = −0.300</td><td><b>0.80 × log₂(0.80/0.10) = 0.80 × 3 = 2.400</b></td></tr>
+      <tr><td><b style="color:var(--ok-text)">● green</b></td><td>0.40 × log₂(0.40/0.15) ≈ 0.40 × 1.42 ≈ 0.566</td><td>0.15 × log₂(0.15/0.40) ≈ 0.15 × (−1.42) ≈ −0.212</td></tr>
+      <tr><td><b style="color:var(--s1-text)">● blue</b></td><td><b>0.50 × log₂(0.50/0.05) ≈ 0.50 × 3.32 ≈ 1.661</b></td><td>0.05 × log₂(0.05/0.50) ≈ 0.05 × (−3.32) ≈ −0.166</td></tr>
       <tr><td><b>Total</b></td><td class="big">≈ 1.927 bits</td><td class="big">≈ 2.022 bits</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Check with the earlier numbers: KL(p‖q) = H(p, q) − H(p) ≈ 3.288 − 1.361 = 1.927, and KL(q‖p) = H(q, p) − H(q) ≈ 2.906 − 0.884 = 2.022. (H(p) and H(q) are the entropies of p and q, lesson 4.)</p>
   <ul>
-    <li><b>KL(p‖q)</b> is mostly <b style="color:var(--s1)">blue</b>: under p blue is common, but q made it 10 times rarer (0.50 ÷ 0.05 = 10), so each blue costs log₂(10) ≈ 3.32 extra bits. Red gives a small saving (−0.300), because q over-prepared for red.</li>
-    <li><b>KL(q‖p)</b> is mostly <b style="color:var(--bad)">red</b>: under q red is common, but p made it 8 times rarer (0.80 ÷ 0.10 = 8), costing log₂(8) = 3 extra bits each time.</li>
+    <li><b>KL(p‖q)</b> is mostly <b style="color:var(--s1-text)">blue</b>: under p blue is common, but q made it 10 times rarer (0.50 ÷ 0.05 = 10), so each blue costs log₂(10) ≈ 3.32 extra bits. Red gives a small saving (−0.300), because q over-prepared for red.</li>
+    <li><b>KL(q‖p)</b> is mostly <b style="color:var(--bad-text)">red</b>: under q red is common, but p made it 8 times rarer (0.80 ÷ 0.10 = 8), costing log₂(8) = 3 extra bits each time.</li>
   </ul>
   <p>The weights come from the first distribution, so each direction cares most about the events <i>it</i> thinks are common. That is why the two totals differ, and why KL, like cross-entropy, is <b>not a true distance</b>. It does have one distance-like property cross-entropy lacks: KL(p‖p) = 0.</p>
 
@@ -2186,7 +2231,7 @@ decoded = [majority(received[i:i + 3])
         <div style="display:flex;justify-content:space-between;font:11px var(--mono);color:var(--muted)"><span>0</span><span>2</span><span>4</span><span>6 bits</span></div>
         <div class="stat ce-stat"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2195,14 +2240,14 @@ decoded = [majority(received[i:i + 3])
 
   <h3>Link with compression</h3>
   <p>Lesson 6 gave each symbol a code of about −log₂(p) bits. If you build your code from a belief q instead of the truth p, each symbol costs −log₂(q) bits, and the average is exactly the cross-entropy. Example: with the "Uniform belief" (1/4 for each weather), every weather gets a 2-bit code, so you pay 2 bits per day instead of the best possible 1.75. The extra 2 − 1.75 = <b>0.25 bits</b> per day is the KL divergence.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Belief q</th><th>Cross-entropy H(p,q)</th><th>KL(p‖q) = H(p,q) − 1.75</th></tr></thead>
     <tbody>
       <tr><td><b>Correct</b> (1/2, 1/4, 1/8, 1/8)</td><td>1.75 bits</td><td>0: no extra cost</td></tr>
       <tr><td><b>Uniform</b> (1/4 each)</td><td>2.00 bits</td><td>0.25 bits</td></tr>
       <tr><td><b>Very wrong</b> (0.05, 0.05, 0.45, 0.45)</td><td>≈ 3.53 bits</td><td>≈ 1.78 bits</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <div class="callout warn"><b>Never be 100% sure:</b> if your belief gives an outcome probability 0 and it happens, the surprise −log₂(0) is infinite. That is why the sliders cannot go to 0, and why AI models never give a real outcome a probability of exactly zero.</div>
 
@@ -2444,7 +2489,7 @@ print(cross_entropy(Q, P))   # 2.906 bits`, "cross_entropy_steps.py");
       DS.el("td", { style: { fontWeight: i === 2 ? "700" : "400" } }, `${P[i].toFixed(2)} × ${IT.f(Math.log2(1 / Q[i]))} = ${IT.f(term("pq", i), 3)}`),
       DS.el("td", { style: { fontWeight: i === 0 ? "700" : "400" } }, `${Q[i].toFixed(2)} × ${IT.f(Math.log2(1 / P[i]))} = ${IT.f(term("qp", i), 3)}`))));
     t.append(DS.el("tr", { class: "sum" }, DS.el("td", {}, "Total"), DS.el("td", {}, IT.f(a, 3)), DS.el("td", {}, IT.f(b, 3))));
-    say(`H(p, q) = <b>${IT.f(a, 3)}</b> bits, mostly <b style="color:var(--s1)">blue</b> (p says 50%, q only 5%). H(q, p) = <b>${IT.f(b, 3)}</b> bits, mostly <b style="color:var(--bad)">red</b> (q says 80%, p only 10%). Different events dominate, so the totals differ.`);
+    say(`H(p, q) = <b>${IT.f(a, 3)}</b> bits, mostly <b style="color:var(--s1-text)">blue</b> (p says 50%, q only 5%). H(q, p) = <b>${IT.f(b, 3)}</b> bits, mostly <b style="color:var(--bad-text)">red</b> (q says 80%, p only 10%). Different events dominate, so the totals differ.`);
     DS.log(logEl, `H(p,q) ${IT.f(a, 3)} ≠ H(q,p) ${IT.f(b, 3)}`, "ok");
   };
   $(".cs-reset").onclick = () => { if (!root.dataset.busy) reset(); };
@@ -2600,7 +2645,7 @@ print(kl(Q, P))   # 2.022 bits`, "kl_divergence.py");
       DS.el("td", { style: { fontWeight: i === 2 ? "700" : "400" } }, sg(term("pq", i))), DS.el("td", { style: { fontWeight: i === 0 ? "700" : "400" } }, sg(term("qp", i))))));
     t.append(DS.el("tr", { class: "sum" }, DS.el("td", {}, "Total"), DS.el("td", {}, IT.f(a, 3)), DS.el("td", {}, IT.f(b, 3))));
     $(".kl-formula").innerHTML = `${fx("pq")} = <b>${IT.f(a, 3)}</b> bits<span style="display:block;margin-top:6px">${fx("qp")} = <b>${IT.f(b, 3)}</b> bits</span><span class="f2">each direction weights the events it thinks are common</span>`;
-    say(`KL(p‖q) = <b>${IT.f(a, 3)}</b> bits, driven by <b style="color:var(--s1)">blue</b> (p says 50%, q only 5%). KL(q‖p) = <b>${IT.f(b, 3)}</b> bits, driven by <b style="color:var(--bad)">red</b> (q says 80%, p only 10%). Negative terms (faded) are savings, but both totals stay above 0.`);
+    say(`KL(p‖q) = <b>${IT.f(a, 3)}</b> bits, driven by <b style="color:var(--s1-text)">blue</b> (p says 50%, q only 5%). KL(q‖p) = <b>${IT.f(b, 3)}</b> bits, driven by <b style="color:var(--bad-text)">red</b> (q says 80%, p only 10%). Negative terms (faded) are savings, but both totals stay above 0.`);
     DS.log(logEl, `KL(p‖q) ${IT.f(a, 3)} ≠ KL(q‖p) ${IT.f(b, 3)}`, "ok");
   };
   $(".kl-reset").onclick = () => { if (!root.dataset.busy) reset(); };
@@ -2660,7 +2705,7 @@ print(kl(Q, P))   # 2.022 bits`, "kl_divergence.py");
           <div class="stat ai-lstat"></div>
         </div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2683,14 +2728,14 @@ print(kl(Q, P))   # 2.022 bits`, "kl_divergence.py");
   <p>In the demo, the easy sentence, "The cat sat on the mat", gets probabilities (one for each word after the first) 0.10, 0.30, 0.70, 0.80 and 0.50, with surprises 3.32 + 1.74 + 0.51 + 0.32 + 1.00 ≈ 6.90 bits (the rounded parts add to 6.89; the exact total is 6.895). Average = 6.90 ÷ 5 ≈ 1.38 bits, so perplexity = 2<sup>1.38</sup> ≈ 2.6. The odd sentence, "The purple elephant sang opera", gets probabilities 0.01, 0.02, 0.01 and 0.05, with surprises 6.64 + 5.64 + 6.64 + 4.32 ≈ 23.25 bits. Average = 23.25 ÷ 4 ≈ 5.81 bits, so perplexity = 2<sup>5.81</sup> ≈ 56. (The probabilities are invented for the demo, but real models are scored exactly this way.) Lower perplexity = a better model of the language.</p>
 
   <h3>Beyond AI</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Field</th><th>Idea from this course</th><th>Example</th></tr></thead>
     <tbody>
       <tr><td><b>Passwords and cryptography</b></td><td>surprise (lesson 3): a secret's strength is its entropy in bits</td><td>8 random lowercase letters: 8 × log₂(26) ≈ 37.6 bits. Modern encryption keys use 128 or 256 bits.</td></tr>
       <tr><td><b>Biology</b></td><td>entropy (lesson 4)</td><td>DNA has 4 letters (A, C, G, T), so each letter carries at most log₂(4) = 2 bits.</td></tr>
       <tr><td><b>Data and the internet</b></td><td>compression and capacity (lessons 6-7)</td><td>Every file, video call and phone signal uses both.</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip"><b>The big picture:</b> learning, compressing and communicating are the same problem seen from three sides. A model that predicts well is surprised less (low cross-entropy), compresses well (short codes), and needs fewer bits to describe the world.</div>
   <div class="quizbox"></div>
 </section>
@@ -2897,6 +2942,15 @@ print(round(avg, 2), round(perplexity, 1))
   <p class="lead">The key terms from the course on one page. Filter by topic to revise before the final quiz.</p>
   <style>#glossary [data-col][aria-pressed="true"] { background: var(--surface-2); color: var(--text); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }</style>
   <div class="controls gl-filters" role="group" aria-label="Filter by topic"></div>
+  <style>
+    /* Phones: each row becomes a small block (topic, term, meaning) instead of three squeezed columns */
+    @media (max-width: 560px) {
+      #glTable thead { display: none; }
+      #glTable tr { display: block; padding: 10px 0; border-bottom: 1px solid var(--border); }
+      #glTable td { display: block; padding: 2px 0; border: 0; }
+      #glTable td:first-child { font-size: .8rem; }
+    }
+  </style>
   <div style="overflow-x:auto"><table class="cx" id="glTable"></table></div>
 </section>
 <script>
@@ -3071,7 +3125,7 @@ print(round(avg, 2), round(perplexity, 1))
     }
     const nameIn = DS.el("input", { type: "text", maxlength: "60", placeholder: "Your full name", "aria-label": "Your name for the certificate", style: { minWidth: "220px" } });
     nameIn.value = certName;
-    const err = DS.el("span", { style: { color: "var(--bad)", fontWeight: "600" } });
+    const err = DS.el("span", { style: { color: "var(--bad-text)", fontWeight: "600" } });
     const scoreCb = DS.el("input", { type: "checkbox", style: { accentColor: "var(--accent)", margin: "0 6px 0 0" } });
     scoreCb.checked = showScore;
     // Toggling updates a certificate that is already on screen.
